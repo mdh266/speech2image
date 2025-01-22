@@ -3,6 +3,8 @@ name: streamlit-docker-deploy
 env:
   SERVICE_NAME: speech2image
   DOCKER_IMAGE: mdh266/speechimage
+  REGION: us-central1 
+  TAG: cloudrun
 
 on:
   push:
@@ -37,8 +39,8 @@ jobs:
 
       - name: Build & Push Docker
         run: | 
-          docker build -t ${{ env.DOCKER_IMAGE }}:cloudrun .
-          docker push ${{ env.DOCKER_IMAGE }}:cloudrun 
+          docker build -t ${{ env.DOCKER_IMAGE }}:${{ env.TAG }} .
+          docker push ${{ env.DOCKER_IMAGE }}:${{ env.TAG }} 
 
       - name: Google Cloud Auth
         uses: 'google-github-actions/auth@v2'
@@ -51,7 +53,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
             gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image=${{ env.DOCKER_IMAGE }}:cloudrun \
-            --region=us-central1 \
+            --image=${{ env.GCP_PROJECT }}:${{ env.TAG }} \
+            --region=${{ env.REGION }}\
             --project=${{ env.GCP_PROJECT }} \
             --set-env-vars=GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }} 

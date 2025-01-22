@@ -1,7 +1,7 @@
 name: streamlit-docker-deploy
 
 env:
-  SERVICE_NAME: speech-to-image
+  SERVICE_NAME: speech2image
   DOCKER_IMAGE: mdh266/speechimage
 
 on:

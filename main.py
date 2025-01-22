@@ -4,6 +4,19 @@ import os
 from google.cloud import speech
 
 
+lang_code_map = {
+    "English": "en-US",
+    "Hebrew": "he-IL",
+    "French": "fr-FR",
+    "German": "de-DE",
+    "Spanish": "es-ES",
+    "Russian": "ru-RU",
+    "Mandarin": "cmn-CN",
+    "Japanese": "ja-JP",
+    "Korean": " ko-KR"
+}
+
+
 def generate_image(
     width: int, height: int, prompt: str
 ) -> replicate.helpers.FileOutput:
@@ -17,12 +30,15 @@ def generate_image(
 
 @st.cache_data
 def speech_to_text(
-    google_api: str, audio_prompt: st.runtime.uploaded_file_manager.UploadedFile
+    language: str,
+    google_api: str, 
+    audio_prompt: st.runtime.uploaded_file_manager.UploadedFile
 ) -> str:
     stt = speech.SpeechClient(client_options={"api_key": google_api})
 
     stt_config = speech.RecognitionConfig(
-        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16, language_code="en-US"
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16, 
+        language_code=lang_code_map[language]
     )
 
     audio = speech.RecognitionAudio(content=audio_prompt.getvalue())
@@ -47,9 +63,12 @@ def sidebar_form(google_api: str):
                 label="Image Height", min_value=100, max_value=2000, value=512
             )
 
+            languages = tuple(lang_code_map.keys())
+
+            language = st.selectbox("Language:", languages)
             audio_prompt = st.audio_input("Say your image idea!")
             submitted = st.form_submit_button("Submit")
-            return submitted, width, height, audio_prompt
+            return submitted, width, height, language, audio_prompt
 
 
 def main(debug: bool = False):
@@ -65,10 +84,12 @@ def main(debug: bool = False):
     )
     st.divider()
 
-    submitted, width, height, audio_prompt = sidebar_form(google_api=google_api)
+    submitted, width, height, language, audio_prompt = sidebar_form(google_api=google_api)
 
     if submitted:
-        text_prompt = speech_to_text(google_api=google_api, audio_prompt=audio_prompt)
+        text_prompt = speech_to_text(google_api=google_api, 
+                                     audio_prompt=audio_prompt,
+                                    language=language)
 
     if submitted and text_prompt:
         with st.expander("Your Idea Was..."):
@@ -82,4 +103,4 @@ def main(debug: bool = False):
 
 
 if __name__ == "__main__":
-    main(debug=False)
+    main(debug=True)

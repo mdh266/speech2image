@@ -54,4 +54,4 @@ jobs:
             --image=${{ env.DOCKER_IMAGE }}:cloudrun \
             --region=us-central1 \
             --set-env-vars=GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }} \
-            --project=${{ env.PROJECT_ID }}
+            --project=${{ env.GCP_PROJECT }}

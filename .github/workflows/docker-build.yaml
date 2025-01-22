@@ -52,6 +52,7 @@ jobs:
         run: |
             gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image=${{ env.DOCKER_IMAGE }}:cloudrun \
-            --region=us-central1 \
             --set-env-vars=GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }} \
+            --region=us-central1 \
             --project=${{ env.GCP_PROJECT }}
+

@@ -23,7 +23,7 @@ jobs:
           ruff format main.py
           ruff check main.py
 
-  docker:
+  docker-build-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -52,6 +52,6 @@ jobs:
         run: |
             gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image=${{ env.DOCKER_IMAGE }}:cloudrun \
-            --set-env-vars=GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }} \
             --region=us-central1 \
-            --project=${{ secrets.PROJECT_ID }}
+            --set-env-vars=GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }} \
+            --project=${{ env.PROJECT_ID }}

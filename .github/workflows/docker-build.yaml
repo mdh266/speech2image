@@ -14,14 +14,14 @@ on:
     - .github/workflows/docker-build.yaml
 
 jobs:
-  # ruff:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: astral-sh/ruff-action@v3
-  #     - run: | 
-  #         ruff format main.py
-  #         ruff check main.py
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v3
+      - run: | 
+          ruff format main.py
+          ruff check main.py
 
   build-deploy:
     runs-on: ubuntu-latest
@@ -35,10 +35,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Build & Push Docker
-      #   run: | 
-      #     docker build -t ${{ env.DOCKER_IMAGE }}:cloudrun .
-      #     docker push ${{ env.DOCKER_IMAGE }}:cloudrun 
+      - name: Build & Push Docker
+        run: | 
+          docker build -t ${{ env.DOCKER_IMAGE }}:cloudrun .
+          docker push ${{ env.DOCKER_IMAGE }}:cloudrun 
 
       - name: Google Cloud Auth
         uses: 'google-github-actions/auth@v2'

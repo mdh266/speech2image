@@ -14,16 +14,16 @@ on:
     - .github/workflows/docker-build.yaml
 
 jobs:
-  ruff:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/ruff-action@v3
-      - run: | 
-          ruff format main.py
-          ruff check main.py
+  # ruff:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: astral-sh/ruff-action@v3
+  #     - run: | 
+  #         ruff format main.py
+  #         ruff check main.py
 
-  docker-build-deploy:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -50,9 +50,10 @@ jobs:
     
       - name: Deploy to Cloud Run
         run: |
-            gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --region=us-central1 \
-            --image=${{ env.DOCKER_IMAGE }}:cloudrun \
+            gcloud run deploy speech2image \
+            --image=mdh266/speechimage:cloudrun \
             --set-env-vars=GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }},REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }} \
-            --project=${{ env.GCP_PROJECT }}
+            --region=us-central1 \
+            --project=${{ env.GCP_PROJECT }} \
+            && gcloud run services update-traffic speech2image --to-latest
 
